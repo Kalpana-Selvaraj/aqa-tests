@@ -495,19 +495,7 @@
 	</test>
 	<test>
 		<testCaseName>jck-runtime-api-java_beans</testCaseName>
-		<disables>
-			<disable>
-				<comment>Disabled on aix for backlog/issues/486. Awaiting some automation improvements, in the interim these targets will be run manually</comment>
-				<platform>ppc64_aix</platform>
-				<version>11</version>
-				<impl>openj9</impl>
-			</disable>
-			<disable>
-				<comment>Disabled on aarch64_mac due to backlog/issues/1300.</comment>
-				<platform>aarch64_mac.*</platform>
-				<impl>openj9</impl>
-			</disable>
-		</disables>
+		
 		<variations>
 			<variation>NoOptions</variation>
 		</variations>
@@ -1067,14 +1055,7 @@
 	</test>
 	<test>
 		<testCaseName>jck-runtime-api-javax_sound</testCaseName>
-		<disables>
-			<disable>
-				<comment>Temporarily disabled on x64 + aarch64 Mac for backlog/issues/718</comment>
-				<platform>(aarch64_mac|x86-64_mac).*</platform>
-				<impl>openj9</impl>
-				<version>11+</version>
-			</disable>
-		</disables>
+		
 		<variations>
 			<variation>NoOptions</variation>
 		</variations>

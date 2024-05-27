@@ -629,7 +629,7 @@ getVendorTestMaterial() {
 
 		if [[ "$dir" =~ "jck" ]]; then
 			echo "BUILD_LIST is $BUILD_LIST"
-			if [[ "$BUILD_LIST" =~ "jck" || "$BUILD_LIST" =~ "all" ]]; then
+			if [[ "$BUILD_LIST" =~ "jck" || "$BUILD_LIST" =~ "external" ||"$BUILD_LIST" =~ "all" ]]; then
 				echo "Remove existing subdir. $repoURL will be used..."
 				rm -rf jck
 			else
@@ -776,8 +776,10 @@ if [ "$USE_TESTENV_PROPERTIES" = true ]; then
 		echo "load ./testenv/testenv.properties"
 		source ./testenv/testenv.properties
 	fi
-	echo "Running checkTags with $teFile and $JDK_VERSION"
-	./scripts/testenv/checkTags.sh $teFile $JDK_VERSION
+	if [[ $JDK_IMPL != "openj9" && $JDK_IMPL != "ibm" ]]; then   
+		echo "Running checkTags with $teFile and $JDK_VERSION"
+		./scripts/testenv/checkTags.sh $teFile $JDK_VERSION
+	fi
 else
 	> ./testenv/testenv.properties
 fi

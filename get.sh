@@ -13,7 +13,6 @@
 # limitations under the License.
 
 set -eo pipefail
-
 SDKDIR=""
 TESTDIR="$(pwd)"
 PLATFORM=""
@@ -54,7 +53,7 @@ usage ()
 	echo '                [--customized_sourceURL|-S ] : indicate sdk source url if sdk source is set as customized.'
 	echo '                [--username ] : indicate username required if customized url requiring authorization is used'
 	echo '                [--password ] : indicate password required if customized url requiring authorization is used'
-	echo '                [--clone_openj9 ] : optional. ture or false. Clone openj9 if this flag is set to true. Default to true'
+	echo '                [--clone_openj9 ] : optional. true or false. Clone openj9 if this flag is set to true. Default to true'
 	echo '                [--openj9_repo ] : optional. OpenJ9 git repo. Default value https://github.com/eclipse-openj9/openj9.git is used if not provided'
 	echo '                [--openj9_sha ] : optional. OpenJ9 pull request sha.'
 	echo '                [--openj9_branch ] : optional. OpenJ9 branch.'
@@ -141,13 +140,13 @@ parseCommandLineArgs()
 
 			"--debug_images_required" )
 				DEBUG_IMAGES_REQUIRED="$1"; shift;;
-			
+
 			"--code_coverage" )
 				CODE_COVERAGE="$1"; shift;;
 
 			"--curl_opts" )
 				CURL_OPTS="$1"; shift;;
-				
+
 			"--additional_artifacts_required" )
 				ADDITIONAL_ARTIFACTS_REQUIRED="$1"; shift;;
 
@@ -250,7 +249,7 @@ getBinaryOpenjdk()
 				info_url="https://ibm.com/semeru-runtimes/api/v3/assets/feature_releases/${JDK_VERSION}/${release_type}?architecture=${arch}&heap_size=${heap_size}&image_type=jdk&jvm_impl=openj9&os=${os}&project=jdk&vendor=ibm https://ibm.com/semeru-runtimes/api/v3/assets/feature_releases/${JDK_VERSION}/${release_type}?architecture=${arch}&heap_size=${heap_size}&image_type=testimage&jvm_impl=openj9&os=${os}&project=jdk&vendor=ibm"
 			fi
 		else
-			download_url="https://api.adoptium.net/v3/binary/latest/${JDK_VERSION}/${release_type}/${os}/${arch}/jdk/${JDK_IMPL}/${heap_size}/adoptium?project=jdk"
+			download_url="https://api.adoptium.net/v3/binary/latest/${JDK_VERSION}/${release_type}/${os}/${arch}/jdk/${JDK_IMPL}/${heap_size}/adoptium?project=jdk https://api.adoptium.net/v3/binary/latest/${JDK_VERSION}/${release_type}/${os}/${arch}/sbom/${JDK_IMPL}/${heap_size}/adoptium?project=jdk"
 			info_url="https://api.adoptium.net/v3/assets/feature_releases/${JDK_VERSION}/${release_type}?architecture=${arch}&heap_size=${heap_size}&image_type=jdk&jvm_impl=${JDK_IMPL}&os=${os}&project=jdk&vendor=eclipse"
 
 			if [ "$JDK_VERSION" != "8" ]; then
@@ -262,7 +261,7 @@ getBinaryOpenjdk()
 		download_url=""
 		echo "--sdkdir is set to $SDK_RESOURCE. Therefore, skip download jdk binary"
 	fi
-	
+
 	if [ "${download_url}" != "" ]; then
 		for file in $download_url
 		do
@@ -270,8 +269,8 @@ getBinaryOpenjdk()
 				if [[ $file = *?[0-9] ]]; then
 					fileName=$(curl -k ${curl_options} ${file}/ | grep href | sed 's/.*href="//' | sed 's/".*//' |  grep '^[a-zA-Z].*')
 					file=${file}/${fileName}
-				fi 
-			fi 
+				fi
+			fi
 			executeCmdWithRetry "${file##*/}" "_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${CURL_OPTS} ${curl_options} $file"
 			rt_code=$?
 			if [ $rt_code != 0 ]; then
@@ -310,14 +309,13 @@ getBinaryOpenjdk()
 	jdk_files=`ls`
 	jdk_file_array=(${jdk_files//\\n/ })
 	last_index=$(( ${#jdk_file_array[@]} - 1 ))
-
 	if [[ $last_index == 0 ]]; then
-		if [[ $download_url =~ '*.tar.gz' ]] || [[ $download_url =~ '*.zip' ]]; then
+		if [[ $download_url =~ '*.tar.gz' ]] || [[ $download_url =~ '*.zip' ]] || [[ $jdk_files == *.zip ]]; then
 			nested_zip="${jdk_file_array[0]}"
 			echo "${nested_zip} is a nested zip"
 			unzip -q $nested_zip -d .
 			rm $nested_zip
-			jdk_files=`ls *jdk*.tar.gz *jre*.tar.gz *testimage*.tar.gz *debugimage*.tar.gz *jdk*.zip *jre*.zip *testimage*.zip *debugimage*.zip 2> /dev/null || true`
+			jdk_files=$(ls *jdk*.tar.gz *jre*.tar.gz *testimage*.tar.gz *debugimage*.tar.gz *jdk*.zip *jre*.zip *testimage*.zip *debugimage*.zip tests-*.tar.gz symbols-*.tar.gz *static-libs*.tar.gz 2> /dev/null || true)
 			echo "Found files under ${nested_zip}:"
 			echo "${jdk_files}"
 			jdk_file_array=(${jdk_files//\\n/ })
@@ -346,7 +344,7 @@ getBinaryOpenjdk()
 	for file_name in "${jdk_file_array[@]}"
 	do
 		if [[ ! "$file_name" =~ "sbom" ]]; then
-			if [[ "$file_name" =~ "debug-image" ]] || [[ "$file_name" =~ "debugimage" ]]; then
+			if [[ "$file_name" =~ "debug-image" ]] || [[ "$file_name" =~ "debugimage" ]] || [[ "$file_name" =~ "symbols-" ]]; then
 				# if file_name contains debug-image, extract into j2sdk-image/jre or j2sdk-image dir
 				# Otherwise, files will be extracted under ./tmp
 				extract_dir="./j2sdk-image"
@@ -386,22 +384,24 @@ getBinaryOpenjdk()
 				len=${#jar_dir_array[@]}
 				if [ "$len" == 1 ]; then
 					jar_dir_name=${jar_dir_array[0]}
-					if [[ "$jar_dir_name" =~ "test-image" ]] && [ "$jar_dir_name" != "openjdk-test-image" ]; then
-						mv $jar_dir_name ../openjdk-test-image
+					if [[ "$jar_dir_name" =~ "test-image" ]] || [[ "$jar_dir_name" =~ "tests-" ]]; then
+						if [ "$jar_dir_name" != "openjdk-test-image" ]; then
+							mv $jar_dir_name ../openjdk-test-image
+						fi
 					elif [[ "$jar_dir_name" =~ jre* ]] && [ "$jar_dir_name" != "j2re-image" ]; then
 						mv $jar_dir_name ../j2re-image
 					elif [[ "$jar_dir_name" =~ jdk* ]] && [ "$jar_dir_name" != "j2sdk-image" ]; then
-						# If test sdk has already been expanded, this one must be the additional sdk 
+						# If test sdk has already been expanded, this one must be the additional sdk
 						isAdditional=0
-						if [ -f "./j2sdk-image/release" ]; then 
+						if [ -f "./j2sdk-image/release" ]; then
 							isAdditional=1
-						else 
-							if [ "$ADDITIONAL_ARTIFACTS_REQUIRED" == "RI_JDK" ]; then 
+						else
+							if [ "$ADDITIONAL_ARTIFACTS_REQUIRED" == "RI_JDK" ]; then
 								# Check release info
 								if [ -d "./$jar_dir_name/Contents" ]; then # Mac
 									release_info=$( cat ./$jar_dir_name/Contents/Home/release )
 									UNZIPPED_ADDITIONAL_SDK="./$jar_dir_name/Contents/Home/"
-								else 	
+								else
 									release_info=$( cat ./$jar_dir_name/release )
 									UNZIPPED_ADDITIONAL_SDK="./$jar_dir_name/"
 								fi
@@ -420,7 +420,7 @@ getBinaryOpenjdk()
 							echo "RI JDK available at $SDKDIR/additionaljdkbinary/"
 							echo "RI JDK version:"
 							$SDKDIR/additionaljdkbinary/bin/java -version
-						else 
+						else
 							mv $jar_dir_name ../j2sdk-image
 						fi
 					# The following only needed if openj9 has a different image name convention
@@ -533,7 +533,7 @@ executeCmdWithRetry()
 		count=$(( $count + 1 ))
 	done
 	set -e
-	return "$rt_code"	
+	return "$rt_code"
 }
 
 getFunctionalTestMaterial()
@@ -621,7 +621,7 @@ getVendorTestMaterial() {
 		sha=${vendor_shas_array[$i]}
 		dir=${vendor_dirs_array[$i]}
 		dest="vendor_${i}"
-
+		echo "vendor repo is $repoURL"
 		branchOption=""
 		if [ "$branch" != "" ]; then
 			branchOption="-b $branch"
@@ -629,7 +629,7 @@ getVendorTestMaterial() {
 
 		if [[ "$dir" =~ "jck" ]]; then
 			echo "BUILD_LIST is $BUILD_LIST"
-			if [[ "$BUILD_LIST" =~ "jck" || "$BUILD_LIST" =~ "all" ]]; then
+			if [[ "$BUILD_LIST" =~ "jck" || "$BUILD_LIST" =~ "external" ||"$BUILD_LIST" =~ "all" ]]; then
 				echo "Remove existing subdir. $repoURL will be used..."
 				rm -rf jck
 			else
@@ -637,7 +637,7 @@ getVendorTestMaterial() {
 				continue
 			fi
 		fi
-
+		
 		echo "git clone ${branchOption} $repoURL $dest"
 		git clone -q --depth 1 $branchOption $repoURL $dest
 
@@ -763,7 +763,7 @@ checkOpenJ9RepoSHA()
 
 parseCommandLineArgs "$@"
 if [ "$USE_TESTENV_PROPERTIES" = true ]; then
-    teFile="./testenv/testenv.properties"
+	teFile="./testenv/testenv.properties"
 	if [[ "$PLATFORM" == *"zos"* ]]; then
 		echo "load ./testenv/testenv_zos.properties"
 		source ./testenv/testenv_zos.properties
@@ -776,8 +776,10 @@ if [ "$USE_TESTENV_PROPERTIES" = true ]; then
 		echo "load ./testenv/testenv.properties"
 		source ./testenv/testenv.properties
 	fi
-	echo "Running checkTags with $teFile and $JDK_VERSION"
-	./scripts/testenv/checkTags.sh $teFile $JDK_VERSION
+	if [[ $JDK_IMPL != "openj9" && $JDK_IMPL != "ibm" ]]; then
+		echo "Running checkTags with $teFile and $JDK_VERSION"
+		./scripts/testenv/checkTags.sh $teFile $JDK_VERSION
+	fi
 else
 	> ./testenv/testenv.properties
 fi

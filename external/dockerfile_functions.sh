@@ -14,6 +14,7 @@
 #
 
 source $(dirname "$0")/common_functions.sh
+source $(dirname "$0")/provider.sh
 
 # Generate the common license and copyright header
 print_legal() {
@@ -75,14 +76,15 @@ sanitize_test_names() {
 
 print_image_args() {
     local file=$1
-    local os=$2
-    local version=$3
-    local vm=$4
-    local package=$5
-    local build=$6
-    local base_docker_registry_dir="$7"
+    local test=$2
+    local os=$3
+    local version=$4
+    local vm=$5
+    local package=$6
+    local build=$7
+    local base_docker_registry_dir="$8"
 
-    image_name="eclipse-temurin"
+    image_name="docker.io/library/eclipse-temurin"
     tag=""
     if [[ "${package}" == "jre" ]]; then
         tag="${version}-jre"
@@ -93,8 +95,11 @@ print_image_args() {
         if  [[ "${os}" == "ubuntu" ]]; then
             image_name="docker.io/ibm-semeru-runtimes"
             tag=open-${tag}
+        elif [[ "${os}" == *"ubi"* && "${test}" != *"criu"* ]]; then
+            image_name="registry.access.redhat.com/$base_docker_registry_dir"
+            tag="latest"
         else
-            # os is ubi
+            # os is ubi, and test is criu
             # temporarily all ubi based testing use internal base image
             image_name="$DOCKER_REGISTRY_URL/$base_docker_registry_dir"
             tag="latest"
@@ -122,7 +127,7 @@ print_test_tag_arg() {
 
 print_result_comment_arg() {
     local file=$1
-    echo -e "ENV RESULT_COMMENT=\"IN DOCKER\"\n" >> ${file}
+    echo -e "ENV RESULT_COMMENT=\"IN CONTAINER($(getProviderTile))\"\n" >> ${file}
 }
 
 # Select the ubuntu OS packages
@@ -163,6 +168,18 @@ print_jdk_install() {
             "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_x86-64_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
             "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_x86-64_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_x86-64_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-x86-64_linux.*tar.gz\"); \\" \
             "\n\t     ;; \\" \
+            "\n\t  *aarch64*) \\" \
+            "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_aarch64_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
+            "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_aarch64_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_aarch64_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-aarch64_linux.*tar.gz\"); \\" \
+            "\n\t     ;; \\" \
+            "\n\t  *390*) \\" \
+            "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_s390x_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
+            "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_s390x_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_s390x_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-s390x_linux.*tar.gz\"); \\" \
+            "\n\t     ;; \\" \
+            "\n\t  *ppc*) \\" \
+            "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_ppc64le_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
+            "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_ppc64le_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_ppc64le_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-ppc64le_linux.*tar.gz\"); \\" \
+            "\n\t     ;; \\" \
             "\n\t  *) \\" \
             "\n\t     echo \"Unsupported platform \"; \\" \
             "\n\t     exit 1; \\" \
@@ -181,11 +198,11 @@ print_jdk_install() {
             "\n\t PATH=\"/opt/java/openjdk/bin:\$PATH\" " \
             "\n" >> ${file}
 
-    echo -e "\nENV JAVA_TOOL_OPTIONS=\"-XX:+IgnoreUnrecognizedVMOptions -XX:+IdleTuningGcOnIdle\" " \
+    echo -e "\nENV JAVA_TOOL_OPTIONS=\"$JAVA_TOOL_OPTIONS -XX:+IgnoreUnrecognizedVMOptions -XX:+IdleTuningGcOnIdle\" " \
             "\n" >> ${file}
 
     echo -e "\nENV RANDFILE=/tmp/.rnd  \\" \
-            "\n\t OPENJ9_JAVA_OPTIONS=\"-XX:+IgnoreUnrecognizedVMOptions -XX:+IdleTuningGcOnIdle -Dosgi.checkConfiguration=false\" " \
+            "\n\t OPENJ9_JAVA_OPTIONS=\"$OPENJ9_JAVA_OPTIONS -XX:+IgnoreUnrecognizedVMOptions -XX:+IdleTuningGcOnIdle -Dosgi.checkConfiguration=false\" " \
             "\n" >> ${file}
 
 }
@@ -429,7 +446,7 @@ print_maven_install() {
 print_java_tool_options() {
     local file=$1
 
-    echo -e "ENV JAVA_TOOL_OPTIONS=\"-Dfile.encoding=UTF8 -Djava.security.egd=file:/dev/./urandom\"\n" >> ${file}
+    echo -e "ENV JAVA_TOOL_OPTIONS=\"$JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8 -Djava.security.egd=file:/dev/./urandom\"\n" >> ${file}
 }
 
 print_environment_variable() {
@@ -500,8 +517,16 @@ print_clone_project() {
     # Cause Test name to be capitalized
     test_tag="$(sanitize_test_names ${test} | tr a-z A-Z)_TAG"
     git_branch_tag="master"
-    if [[ "$test_tag" != *"CRIU"* ]]; then
-        git_branch_tag=$test_tag
+    if [[ "${github_url}" == *"aqa-tests"* ]]; then
+        if [[ ! -z ${USE_TESTENV_PROPERTIES} ]]; then
+            if [[ "${USE_TESTENV_PROPERTIES}" == "true" && ! -z ${ADOPTOPENJDK_REPO} && ! -z ${ADOPTOPENJDK_BRANCH} ]]; then
+                github_url=${ADOPTOPENJDK_REPO}
+                git_branch_tag=${ADOPTOPENJDK_BRANCH}
+                echo -e "\nENV USE_TESTENV_PROPERTIES=true\n" >> ${file}
+            fi
+        fi
+    else
+        git_branch_tag=\$${test_tag}
     fi
 
     # Get Github folder name
@@ -511,7 +536,7 @@ print_clone_project() {
             "\nENV ${test_tag}=\$${test_tag}" \
             "\nRUN git clone ${github_url}" \
             "\nWORKDIR /${folder}/" \
-            "\nRUN git checkout \$${git_branch_tag}" \
+            "\nRUN git checkout ${git_branch_tag}" \
             "\nWORKDIR /" \
             "\n" >> ${file}
 }
@@ -586,7 +611,7 @@ generate_dockerfile() {
     echo -n "Writing ${file} ... "
     print_legal ${file};
     print_adopt_test ${file} ${test};
-    print_image_args ${file} ${os} ${version} ${vm} ${package} ${build} "${base_docker_registry_dir}";
+    print_image_args ${file} ${test} ${os} ${version} ${vm} ${package} ${build} "${base_docker_registry_dir}";
     print_result_comment_arg ${file};
     print_test_tag_arg ${file} ${test} ${tag_version};
     print_${os}_pkg ${file} "${!packages}";

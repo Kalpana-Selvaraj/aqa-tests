@@ -68,6 +68,7 @@ public class JavatestUtil {
 	private static String customJtx = "";
 	private static String krbConfFile = "";
 	private static String fileUrl;
+	private static String ftpUrl;
 	private static String jckPolicyFileFullPath;
 	private static String jtliteJarFullPath; 
 	private static String javatestJarFullPath;
@@ -347,6 +348,7 @@ public class JavatestUtil {
 			testHost2Name = prop.getProperty("testhost2name");
 			testHost2Ip = prop.getProperty("testhost2ip");
 			httpUrl = prop.getProperty("httpurl");
+			ftpUrl = prop.getProperty("ftpurl");
 			// Make sure username properties do not have trailing whitespace before adding server location data.
 			krb5ClientPassword = prop.getProperty("krb5ClientPassword");
 			krb5ClientUsername = prop.getProperty("krb5ClientUsername");
@@ -613,6 +615,7 @@ public class JavatestUtil {
 			if ( tests.contains("api/java_net") || tests.equals("api") ) {
 				fileContent += "set jck.env.runtime.url.httpURL " + httpUrl + ";\n";
 				fileContent += "set jck.env.runtime.url.fileURL " + fileUrl + ";\n";
+				fileContent += "set jck.env.runtime.url.ftpURL " + ftpUrl + ";\n";
 			}
 			
 			if ( tests.contains("api/java_net") || tests.contains("api/org_omg") || tests.contains("api/javax_management") || tests.contains("api/javax_xml") || tests.contains("vm/jdwp") || tests.equals("api")) {

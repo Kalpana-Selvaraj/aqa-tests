@@ -14,7 +14,7 @@
 
 # hotspot_all
 
-# compiler/7184394/TestAESMain.java https://github.com/adoptium/infrastructure/issues/2893 
+# compiler/7184394/TestAESMain.java https://github.com/adoptium/infrastructure/issues/2893
 compiler/7184394/TestAESMain.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x,solaris-sparcv9
 compiler/intrinsics/sha/TestSHA.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
 
@@ -221,7 +221,6 @@ java/nio/file/Files/walkFileTree/find.sh https://github.com/adoptium/aqa-tests/i
 # jdk_rmi
 
 java/rmi/activation/Activatable/extLoadedImpl/ext.sh https://github.com/adoptium/aqa-tests/issues/819 macosx-all
-java/rmi/transport/dgcDeadLock/DGCDeadLock.java https://github.com/adoptium/aqa-tests/issues/1259 macosx-all
 sun/rmi/runtime/Log/6409194/NoConsoleOutput.java https://bugs.openjdk.java.net/browse/JDK-8156798 generic-all
 java/rmi/Naming/legalRegistryNames/LegalRegistryNames.java https://bugs.openjdk.java.net/browse/JDK-8005619 solaris-x64
 java/rmi/activation/Activatable/shutdownGracefully/ShutdownGracefully.java https://bugs.openjdk.org/browse/JDK-8085192 linux-all
@@ -245,6 +244,7 @@ sun/security/pkcs11/rsa/TestCACerts.java https://github.com/adoptium/aqa-tests/i
 sun/security/rsa/TestCACerts.java https://github.com/adoptium/aqa-tests/issues/68 generic-all
 com/sun/crypto/provider/Mac/MacClone.java https://bugs.openjdk.java.net/browse/JDK-7087021 solaris-all
 javax/net/ssl/ServerName/BestEffortOnLazyConnected.java https://bugs.openjdk.org/browse/JDK-8155049 solaris-x64
+javax/net/ssl/ServerName/SSLEngineExplorerMatchedSNI.java https://bugs.openjdk.org/browse/JDK-8212096 solaris-x64
 javax/net/ssl/Stapling/HttpsUrlConnClient.java https://github.com/adoptium/aqa-tests/issues/4150 solaris-sparcv9
 javax/net/ssl/Stapling/SSLSocketWithStapling.java https://github.com/adoptium/aqa-tests/issues/4150 solaris-sparcv9
 javax/net/ssl/TLSCommon/ConcurrentClientAccessTest.java https://github.com/adoptium/aqa-tests/issues/4150 solaris-sparcv9
@@ -361,8 +361,6 @@ java/util/Arrays/TimSortStackSize2.java https://github.com/adoptium/aqa-tests/is
 java/util/Random/RandomTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
 java/util/ResourceBundle/Control/Bug6530694.java https://github.com/adoptium/aqa-tests/issues/137 macosx-all
 java/util/Spliterator/SpliteratorTraversingAndSplittingTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
-java/util/concurrent/locks/Lock/TimedAcquireLeak.java https://github.com/adoptium/aqa-tests/issues/1259 macosx-all
-java/util/logging/TestLoggerWeakRefLeak.java https://github.com/adoptium/aqa-tests/issues/1259 macosx-all
 java/util/stream/boottest/java/util/stream/SpinedBufferTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
 java/util/stream/test/org/openjdk/tests/java/util/stream/CountLargeTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
 java/util/stream/test/org/openjdk/tests/java/util/stream/ExplodeOpTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x

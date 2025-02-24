@@ -44,11 +44,11 @@
 		<groups>
 			<group>jck</group>
 		</groups>
-		<disables>
+		<!--<disables>
 			<disable>
 				<comment>https://github.com/adoptium/TKG/issues/123</comment>
 			</disable>
-		</disables>
+		</disables> -->
 		<platformRequirements>os.linux,arch.x86,bits.64</platformRequirements>
 	</test>
 	<test>

@@ -16,24 +16,25 @@ AQAvit test job parameters are grouped logically by the type of input they are.
 ### Test Repositories Parameters
 Repositories where we pull test material from. Unless you are testing test code, these do not need to be changed.
 
-| Parameter                             | Description                                                                                               |
-|--------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| Parameter                             | Description                                                                                              |
+|---------------------------------------|----------------------------------------------------------------------------------------------------------|
 | `ADOPTOPENJDK_REPO`                   | Optional. Your fork of `aqa-tests`.                                                                      |
-| `ADOPTOPENJDK_BRANCH`                 | Optional. Your branch off of your fork of `aqa-tests`.                                                  |
-| `OPENJ9_REPO`                         | Optional. Your fork of `openj9`.                                                                         |
-| `OPENJ9_BRANCH`                       | Optional. Your branch of your fork of `openj9`.                                                         |
-| `OPENJ9_SHA`                          | Optional. Pin to a specific SHA of `openj9`.                                                            |
-| `JDK_REPO`                            | Optional. Use test material from a specific OpenJDK repository.                                         |
-| `JDK_BRANCH`                          | Optional. Use test material from a specific OpenJDK branch.                                             |
-| `OPENJDK_SHA`                         | Optional. Pin to a specific OpenJDK SHA.                                                                |
-| `TKG_OWNER_BRANCH`                    | Optional. Use a specific `adoptium/TKG` fork/branch.                                                    |
-| `ADOPTOPENJDK_SYSTEMTEST_OWNER_BRANCH`| Optional. Use a specific `adoptium/aqa-systemtest` fork/branch.                                         |
-| `OPENJ9_SYSTEMTEST_OWNER_BRANCH`       | Optional. Use a specific `openj9/openj9-systemtest` fork/branch.                                        |
-| `STF_OWNER_BRANCH`                    | Optional. Use a specific `adoptium/STF` fork/branch.                                                    |
-| `JCK_GIT_REPO`                        | Optional. Use a specific private repository for JCK test material supplied under OCTLA.                |
+| `ADOPTOPENJDK_BRANCH`                 | Optional. Your branch off of your fork of `aqa-tests`.                                                   |
+| `OPENJ9_REPO` (*)                     | Optional. Your fork of `openj9`.                                                                         |
+| `OPENJ9_BRANCH` (*)                   | Optional. Your branch of your fork of `openj9`.                                                          |
+| `OPENJ9_SHA`                          | Optional. Pin to a specific SHA of `openj9`.                                                             |
+| `JDK_REPO` (*)                        | Optional. Use test material from a specific OpenJDK repository.                                          |
+| `JDK_BRANCH` (*)                      | Optional. Use test material from a specific OpenJDK branch.                                              |
+| `OPENJDK_SHA`                         | Optional. Pin to a specific OpenJDK SHA.                                                                 |
+| `TKG_OWNER_BRANCH` (*)               | Optional. Use a specific `adoptium/TKG` fork/branch.                                                     |
+| `ADOPTOPENJDK_SYSTEMTEST_OWNER_BRANCH` (*) | Optional. Use a specific `adoptium/aqa-systemtest` fork/branch.                                          |
+| `OPENJ9_SYSTEMTEST_OWNER_BRANCH` (*)     | Optional. Use a specific `openj9/openj9-systemtest` fork/branch.                                         |
+| `STF_OWNER_BRANCH`                    | Optional. Use a specific `adoptium/STF` fork/branch.                                                     |
+| `JCK_GIT_REPO`                        | Optional. Use a specific private repository for JCK test material supplied under OCTLA.                  |
 
+Items marked with a (*) will be ignored if USE_TESTENV_PROPERTIES is set to true.
 
-## Non-AQA Test Repositories
+### Non-AQA Test Repositories
 Additional test repositories that can be overlaid onto existing AQA test material for extra testing.
 This is used for laying down any test material, particularly useful for running private tests that cannot be open-sourced.  Examples of how these parameters are used can be seen by looking at the smoke tests in the temurin-build repository and some MSI tests in the installer repository.  TKG can discover any test material, as long as you tell it where to look (through setting these parameters), and that these repositories contain build instructions (via build.xml ant scripts) and execution instructions (via playlist.xml files).
 
@@ -79,7 +80,7 @@ Provide parameters for which test material to build and which test targets to ru
 | Parameter          | Description                                                                                                           |
 |--------------------|-----------------------------------------------------------------------------------------------------------------------|
 | `BUILD_LIST`       | Required. Specifies directories to be compiled, e.g., `openjdk`, `system`, `perf`, `external`, `functional`.         |
-| `DYNAMIC_COMPILE`  | Optional. Boolean. TKG identifies dependencies and reduces compiled test material.                                 |
+| `DYNAMIC_COMPILE`  | Optional. Boolean. TKG identifies dependencies and reduces compiled test material. When compiling the entire `functional` folder with `JDK_IMPL=hotspot`, set `DYNAMIC_COMPILE=true`; otherwise TKG may detect and try to compile OpenJ9-specific test material, which can cause compile failures on HotSpot. |
 | `TARGET`           | Required. Specifies the test target. Cannot use top-level targets like `sanity.openjdk`, `extended.system`.        |
 |                    | Test targets are defined in `playlist.xml` files as `testCaseName` tags, like `jdk_math` or [jdk_custom](https://github.com/adoptium/aqa-tests/blob/master/openjdk/playlist.xml#L18). |
 | `CUSTOM_TARGET`    | Required when `TARGET=jdk_custom|hotspot_custom|langtools_custom`. Specifies a specific test class, directory, or space-separated list of test classes. For instance, `test/jdk/java/math/BigInteger/BigIntegerTest.java`. |
@@ -125,7 +126,7 @@ Parameters to determine what to do with post-run artifacts.
 | `ARTIFACTORY_REPO`         | Optional, use in conjunction with ARTIFACTORY_SERVER.                                                                                  |
 | `ARTIFACTORY_ROOT_DIR`     | Optional, use in conjunction with ARTIFACTORY_SERVER.                                                                                  |
 | `CLOUD_PROVIDER`           | Optional, if set, Jenkins jobs may try to spin up dynamic agents to run tests on if all real nodes are in use.                        |
-| `USE_TESTENV_PROPERTIES`   | Optional, boolean, use the values provided in the testenv.properties file to pin to particular versions of test material.            |
+| `USE_TESTENV_PROPERTIES`   | Optional, boolean, use the values provided in the testenv.properties file to pin to particular versions of test material. When true, values in the testenv.properties file override Test Repository Parameter values. |
 | `RERUN_ITERATIONS`         | Optional, if set, indicates that when test targets fail, they are to be rerun this many times.                                         |
 | `RELATED_NODES`            | Setting the client machine label for use in client/server testing.                                                                     |
 

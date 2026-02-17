@@ -154,6 +154,7 @@ jdk/internal/vm/Continuation/ClassUnloading.java https://github.com/eclipse-open
 jdk/internal/vm/Continuation/Fuzz.java https://github.com/eclipse-openj9/openj9/issues/15247 generic-all
 jdk/internal/vm/Continuation/LiveFramesDriver.java https://github.com/eclipse-openj9/openj9/issues/15152 generic-all
 jdk/internal/vm/Continuation/OSRTest.java https://github.com/eclipse-openj9/openj9/issues/19357 generic-all
+jdk/internal/vm/Continuation/OSRWithManyLocals.java https://github.com/eclipse-openj9/openj9/issues/19357 generic-all
 jdk/internal/vm/Continuation/Scoped.java https://github.com/eclipse-openj9/openj9/issues/15163 generic-all
 
 ############################################################################
@@ -378,6 +379,7 @@ java/security/SecureRandom/ApiTest.java https://github.com/eclipse-openj9/openj9
 java/security/SecureRandom/EnoughSeedTest.java https://github.com/eclipse-openj9/openj9/issues/16734 windows-all
 java/security/Signature/ResetAfterException.java    https://github.com/eclipse-openj9/openj9/issues/12807   windows-all
 java/security/Signature/SignatureLength.java    https://github.com/eclipse-openj9/openj9/issues/12807   windows-all
+java/security/SignedJar/spi-calendar-provider/TestSPISigned.java https://github.com/adoptium/aqa-tests/issues/6708 generic-all
 
 ############################################################################
 

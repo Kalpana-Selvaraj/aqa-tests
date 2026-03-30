@@ -127,7 +127,7 @@ java/lang/Thread/SleepSanity.java https://github.com/eclipse-openj9/openj9/issue
 java/lang/Thread/ThreadSleepEvent.java https://github.com/eclipse-openj9/openj9/issues/20166 generic-all
 java/lang/Thread/UncaughtExceptions.sh https://github.com/eclipse-openj9/openj9/issues/6690 generic-all
 java/lang/Thread/jni/AttachCurrentThread/AttachTest.java#id1 https://github.com/eclipse-openj9/openj9/issues/17399 generic-all
-java/lang/Thread/virtual/Collectable.java https://github.com/eclipse-openj9/openj9/issues/18463 windows-all
+java/lang/Thread/virtual/Collectable.java https://github.com/eclipse-openj9/openj9/issues/18463 linux-all,windows-all
 java/lang/Thread/virtual/JfrEvents.java https://github.com/eclipse-openj9/openj9/issues/20166 generic-all
 java/lang/Thread/virtual/Starvation.java https://github.com/eclipse-openj9/openj9/issues/21957 aix-all,linux-ppc64le
 java/lang/Thread/virtual/ThreadAPI.java#default https://github.com/eclipse-openj9/openj9/issues/22029 windows-all
@@ -465,6 +465,7 @@ java/time/test/java/time/TestClock_System.java https://github.com/eclipse-openj9
 java/util/Arrays/largeMemory/ParallelPrefix.java https://github.com/eclipse-openj9/openj9/issues/4100 linux-ppc64le
 java/util/Arrays/TimSortStackSize2.java https://github.com/eclipse-openj9/openj9/issues/7086 generic-all
 java/util/BitSet/stream/BitSetStreamTest.java https://github.com/eclipse-openj9/openj9/issues/4720 linux-all
+java/util/concurrent/ArrayBlockingQueue/WhiteBox.java https://github.com/eclipse-openj9/openj9/issues/19047 generic-all
 java/util/concurrent/forkjoin/FJExceptionTableLeak.java https://github.com/eclipse-openj9/openj9/issues/3209 generic-all
 java/util/concurrent/locks/Lock/TimedAcquireLeak.java https://github.com/eclipse-openj9/openj9/issues/7125 macosx-all,linux-all,aix-all
 java/util/concurrent/locks/Lock/OOMEInAQS.java https://github.com/eclipse-openj9/openj9/issues/16659 generic-all
@@ -480,6 +481,7 @@ java/util/Spliterator/SpliteratorCollisions.java https://github.com/eclipse-open
 java/util/stream/boottest/java.base/java/util/stream/NodeTest.java https://github.com/eclipse-openj9/openj9/issues/4129 macosx-all
 java/util/stream/test/org/openjdk/tests/java/util/SplittableRandomTest.java https://github.com/eclipse-openj9/openj9/issues/4613 generic-all
 java/util/stream/test/org/openjdk/tests/java/util/stream/ToArrayOpTest.java https://github.com/eclipse-openj9/openj9/issues/3447 generic-all
+java/util/StringJoiner/StringJoinerTest.java https://github.com/eclipse-openj9/openj9/issues/18708 generic-all
 java/util/WeakHashMap/GCDuringIteration.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 java/util/zip/CloseInflaterDeflaterTest.java	https://github.com/eclipse-openj9/openj9/issues/14948	linux-s390x
 java/util/zip/DeflateIn_InflateOut.java https://github.com/eclipse-openj9/openj9/issues/21054 linux-s390x
@@ -540,6 +542,7 @@ java/foreign/stackwalk/TestStackWalk.java#shenandoah https://github.com/eclipse-
 java/foreign/stackwalk/TestStackWalk.java#zgc https://github.com/eclipse-openj9/openj9/issues/13993 generic-all
 java/foreign/TestFallbackLookup.java https://github.com/adoptium/aqa-tests/issues/1297 z/OS-s390x
 java/foreign/TestIllegalLink.java https://github.com/eclipse-openj9/openj9/issues/14002 generic-all
+java/foreign/TestStringEncoding.java https://github.com/eclipse-openj9/openj9/issues/23494 generic-all
 java/foreign/TestUnsupportedPlatform.java https://github.com/eclipse-openj9/openj9/issues/14828 generic-all
 java/foreign/TestUpcallAsync.java https://github.com/eclipse-openj9/openj9/issues/22403 aix-all
 java/foreign/TestUpcallScope.java https://github.com/eclipse-openj9/openj9/issues/22403 aix-all

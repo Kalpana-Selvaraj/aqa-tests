@@ -143,11 +143,11 @@ jni/nullCaller/NullCallerTest.java https://github.com/eclipse-openj9/openj9/issu
 ############################################################################
 
 # jdk_internal
-jdk/internal/loader/NativeLibraries/Main.java  https://github.com/eclipse-openj9/openj9/issues/9018  generic-all
+# jdk/internal/loader/NativeLibraries/Main.java https://github.com/eclipse-openj9/openj9/issues/9018 generic-all
+jdk/internal/loader/NativeLibraries/Main.java https://github.com/adoptium/aqa-tests/issues/1920 generic-all
 jdk/internal/reflect/Reflection/GetCallerClassTest.java#id2 https://github.com/eclipse-openj9/openj9/issues/14097 generic-all
 jdk/internal/reflect/Reflection/GetCallerClassTest.java#id3 https://github.com/eclipse-openj9/openj9/issues/14097 generic-all
 jdk/internal/vm/Continuation/MovingCompWindow.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
-jdk/internal/loader/NativeLibraries/Main.java https://github.com/adoptium/aqa-tests/issues/1920 generic-all
 jdk/internal/vm/Continuation/Basic.java#id0 https://github.com/eclipse-openj9/openj9/issues/15163 generic-all
 jdk/internal/vm/Continuation/Basic.java#id1 https://github.com/eclipse-openj9/openj9/issues/15163 generic-all
 jdk/internal/vm/Continuation/ClassUnloading.java https://github.com/eclipse-openj9/openj9/issues/15152 generic-all
@@ -483,7 +483,6 @@ java/util/Spliterator/SpliteratorCollisions.java https://github.com/eclipse-open
 java/util/stream/boottest/java.base/java/util/stream/NodeTest.java https://github.com/eclipse-openj9/openj9/issues/4129 macosx-all
 java/util/stream/test/org/openjdk/tests/java/util/SplittableRandomTest.java https://github.com/eclipse-openj9/openj9/issues/4613 generic-all
 java/util/stream/test/org/openjdk/tests/java/util/stream/ToArrayOpTest.java https://github.com/eclipse-openj9/openj9/issues/3447 generic-all
-java/util/StringJoiner/StringJoinerTest.java https://github.com/eclipse-openj9/openj9/issues/18708 generic-all
 java/util/WeakHashMap/GCDuringIteration.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 java/util/zip/CloseInflaterDeflaterTest.java	https://github.com/eclipse-openj9/openj9/issues/14948	linux-s390x
 java/util/zip/DeflateIn_InflateOut.java https://github.com/eclipse-openj9/openj9/issues/21054 linux-s390x

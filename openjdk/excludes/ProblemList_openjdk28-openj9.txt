@@ -559,7 +559,6 @@ java/foreign/TestUnsupportedPlatform.java https://github.com/eclipse-openj9/open
 java/foreign/TestUpcallAsync.java https://github.com/eclipse-openj9/openj9/issues/22403 aix-all
 java/foreign/TestUpcallScope.java https://github.com/eclipse-openj9/openj9/issues/22403 aix-all
 java/foreign/TestUpcallStack.java https://github.com/eclipse-openj9/openj9/issues/22403 aix-all
-java/foreign/TestUpcallStress.java https://github.com/eclipse-openj9/openj9/issues/24464 generic-all
 java/foreign/upcalldeopt/TestUpcallDeopt.java https://github.com/eclipse-openj9/openj9/issues/13157 generic-all
 java/foreign/valist/VaListTest.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 
@@ -645,3 +644,10 @@ jdk/internal/platform/docker/TestLimitsUpdating.java https://github.com/eclipse-
 jdk/internal/platform/docker/TestPidsLimit.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
 
 ############################################################################
+
+# valhalla
+
+runtime/valhalla/inlinetypes/verifier/StrictInstanceFieldsTest.java https://github.com/eclipse-openj9/openj9/issues/24512 generic-all
+
+############################################################################
+

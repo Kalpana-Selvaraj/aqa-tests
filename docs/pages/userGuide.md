@@ -621,6 +621,21 @@ Or remove ```<impl>``` element to exclude test against all implementations:
   ...
 ```
 
+#### Unexclusion automation
+
+Once a week, the parse-issues.yml workflow runs in GitHub, and lists tests that are:
+- Currently excluded/disabled.
+- Associated with a valid URL which is:
+  - A closed OpenJDK bug where the fix is present in the OpenJDK source code.
+  - Or a closed Adoptium GitHub issue
+
+These tests are subsequently assessed for unexclusion.
+
+If you want to prevent a test from being considered for unexclusion, even
+after the associated issue is closed, you can do this to the associated issue:
+  - OpenJDK bug: use the resolution "Won't Fix"
+  - GitHub issue: add the label "exclusion:permanent" or "wontfix"
+
 ## Cherry-pick a merged PR to a release branch
 
 For a merged pull request, you can trigger a cherry-pick PR by commenting:
@@ -631,4 +646,4 @@ Example:
 
 ```/cherry-pick v0.9.9-release```
 
-Only the original PR author or members of the `adoptium-aqavit-committers` team can trigger `/cherry-pick`.
+Only the original PR author, reviewers, or the user who merged the PR can trigger `/cherry-pick`.
